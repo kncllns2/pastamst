@@ -28,9 +28,9 @@ def merge_in(self, she):
         
         When assumptions are not met, behavior is largely undefined. 
         '''
-        global _T_ID
-        _T_ID += 1
-        ID = _T_ID
+        #global _T_ID
+        #_T_ID += 1
+        #ID = _T_ID
         #TIMING_LOG.info("transitivitymerge (%d) started" %ID )
         mykeys = set(self.keys())
         herkeys = set(she.keys())
