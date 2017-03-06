@@ -9,7 +9,7 @@
 #
 
 import sys
-from sepp.alignment import MutableAlignment, ExtendedAlignment, _write_fasta
+import sepp.alignment
 import glob
 import numpy as np
 from multiprocessing import Pool
@@ -113,10 +113,8 @@ def union(v1, v2):
 def score(seqs):
     gap = list()
     for i in seqs:
-	length = len(seqs[i])
-	g = seqs[i].count("-")
-	gap.append(g*1.0/length)
-    #what should we return? mean/median/average non-gap length/average length
+	gap.append(seqs[i].count("-")*1.0/seqs[i].colcount)
+    #what should we return? mean/median or mean/median of non-gap length
     gap=sort(gap)
     if len(gap)%2==0:
 	return gap[len(gap)/2]
@@ -134,7 +132,7 @@ def opalPairwise(Dict, store_opal):
 	args = ['java', '-Xmx1000m', '-jar', wheres_opal, '--in', Dict[k1], '--in2', Dict[k2], '--out', store_opal] 
 	#'--quiet' '--align_method', 'profile'] <-why last 2
     	mp.map(subprocess.call(args))
-	seq = MutuableAlignment()
+	seq = CompactAlignment()
 	seq.read_file_object(store_opal)
 	key = score(seq)
 	#create a dictionary of lists of tuples where the key is the opal alignment score
@@ -157,7 +155,7 @@ def getMafftAlignment(self, directory):
     keyName = 1
     #this only works for pasta and how it stores the data, it is not generalized
     for file in glob.glob(directory+'/temp*/step2/centroid/r*/d*'):
-	seq = MutableAlignment()
+	seq = CompactAlignment()
 	seq.read_file_object(file)
 	dictionary[keyName] = seq
 	keyName = keyName + 1
